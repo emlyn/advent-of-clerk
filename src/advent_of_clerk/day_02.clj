@@ -17,14 +17,11 @@
 ;; ## Part 1:
 
 (defn score1 [round]
-  (let [i (char->num (first round))
-        j (char->num (last round))
-        d (mod (- j i) 3)]
-    (+ j
-       ({0 3
-         1 6
-         2 0}
-        d))))
+  (let [other (char->num (first round))
+        you   (char->num (last round))
+        d (- you other)    ;; -2=W, -1=L, 0=D, 1=W, 2=L
+        d (mod (inc d) 3)] ;; 0=L, 1=D, 2=W
+    (+ you (* 3 d))))
 
 ;; Example data:
 (mapv score1 ex)
