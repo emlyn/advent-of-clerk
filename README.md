@@ -1,11 +1,16 @@
-# 🎄 Advent of Clerk
+# 🎄 Advent of Code, using Clerk
 
-A template repo for folks wanting to do [Advent of
- Code](https://adventofcode.com) with [Clerk](https://clerk.vision).
+My attempt at [Advent of Code](https://adventofcode.com)
+with [Clerk](https://clerk.vision).
 
-## Usage
+## View notebook output
 
-Fork & clone this repo, make sure you have [Clojure
+You can see the notebook visualisation of the code on
+[CLERK.garden](https://github.clerk.garden/emlyn/advent-of-clerk).
+
+## Run locally
+
+Clone this repo, make sure you have [Clojure
 installed](https://clojure.org/guides/install_clojure), then run:
 
 ``` shell
