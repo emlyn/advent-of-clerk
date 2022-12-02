@@ -6,7 +6,7 @@
 ;; ## Common:
 (def data
   (->> (str/split (slurp "input/day_01.txt") #"\n\n")
-       (map #(str/split % #"\n"))
+       (map str/split-lines)
        (map #(mapv parse-long %))))
 
 ;; ## Part 1:
