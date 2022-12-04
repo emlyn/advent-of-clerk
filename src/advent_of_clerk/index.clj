@@ -5,7 +5,6 @@
 (ns advent-of-clerk.index
   {:nextjournal.clerk/visibility {:code :hide :result :hide}}
   (:require [babashka.fs :as fs]
-            [clojure.string :as str]
             [nextjournal.clerk :as clerk]))
 
 #_(days-with-contents)
@@ -19,7 +18,7 @@
         (keep (fn [day]
                 (let [f (fs/file "src" "advent_of_clerk" (format "day_%s.clj" (cond->> day (<= day 10) (str "0"))))]
                   (when (and (.exists f)
-                             (< 3 (count (str/split-lines (slurp f)))))
+                             (not (re-find #"(^|\n);+ *DO_NOT_PUBLISH" (slurp f))))
                     (str f)))))
         (range 25)))
 
