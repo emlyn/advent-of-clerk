@@ -5,31 +5,57 @@
 
 ;; ## Common:
 
-;; DO_NOT_PUBLISH (remove this line when you edit this file)
-
 (defn process [s]
-  (->> s
-       str/split-lines))
+  s)
 
-(def ex (process ""))
+(def ex1 (process "bvwbjplbgvbhsrlpgdmjqwftvncz"))
+(def ex2 (process "nppdvjthqldpwncqszvftbrmjlhg"))
+(def ex3 (process "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"))
+(def ex4 (process "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"))
 
-(def data (process "" #_(slurp "input/day_06.txt")))
+(def data (process (slurp "input/day_06.txt")))
 
 ;; ## Part 1:
 
 (defn part1 [d]
-  (->> d))
+  (->> d
+       (partition 4 1)
+       (map set)
+       (map count)
+       (take-while #(< % 4))
+       (count)
+       (+ 4)))
 
-(part1 ex)
+(part1 ex1)
+
+(part1 ex2)
+
+(part1 ex3)
+
+(part1 ex4)
 
 (part1 data)
 
 ;; ## Part 2:
 
 (defn part2 [d]
-  (->> d))
+  (->> d
+       (partition 14 1)
+       (map set)
+       (map count)
+       (take-while #(< % 14))
+       (count)
+       (+ 14)))
 
-(part2 ex)
+(part2 "mjqjpqmgbljsphdztnvjfqwrcgsmlb")
+
+(part2 ex1)
+
+(part2 ex2)
+
+(part2 ex3)
+
+(part2 ex4)
 
 (part2 data)
 
