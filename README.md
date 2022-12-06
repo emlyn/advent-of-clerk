@@ -22,3 +22,5 @@ directory for changes and open Clerk in your browser.
 
 Open one of the files there, e.g. `day_01.clj`, make a change and save
 it. You should then see these changes reflected in the browser.
+
+<sup><sub>If Clerk Garden is not up to date, [update](https://github.clerk.garden/emlyn/advent-of-clerk?update=1) it.</sub></sup>
