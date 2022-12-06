@@ -1,7 +1,6 @@
 ;; # 🎄 Advent of Code: Day 6
 (ns advent-of-clerk.day-06
-  (:require [nextjournal.clerk :as clerk]
-            [clojure.string :as str]))
+  (:require [nextjournal.clerk :as clerk]))
 
 ;; ## Common:
 

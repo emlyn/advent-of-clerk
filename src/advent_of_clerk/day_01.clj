@@ -10,8 +10,6 @@
        (map str/split-lines)
        (map #(mapv parse-long %))))
 
-(def data (process (slurp "input/day_01.txt")))
-
 (def ex
   (process "1000
 2000
@@ -27,6 +25,8 @@
 9000
 
 10000"))
+
+(def data (process (slurp "input/day_01.txt")))
 
 ;; ## Part 1:
 

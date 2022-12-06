@@ -4,26 +4,29 @@
             [clojure.string :as str]
             [clojure.set :as set]))
 
-(def ex "vJrwpWtwJgWrhcsFMMfFFhFp
+(defn process [s]
+  (str/split-lines s))
+
+(def ex (process "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw")
+CrZsJsPPZsGzwwsLwLmpwMDw"))
 
-(def data (slurp "input/day_03.txt"))
+(def data (process (slurp "input/day_03.txt")))
 
 (def priority
   (into {}
-        (map vector
-             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-             (next (range)))))
+        (map #(vector (char %1) (inc %2))
+             (concat (range (int \a) (inc (int \z)))
+                     (range (int \A) (inc (int \Z))))
+             (range))))
 
 ;; ## Part 1:
 
 (defn total-priority [d]
   (->> d
-       str/split-lines
        (map #(partition (/ (count %) 2) %))
        (map #(set/intersection (set (first %)) (set (last %))))
        (map first)
@@ -38,7 +41,6 @@ CrZsJsPPZsGzwwsLwLmpwMDw")
 
 (defn badges [d]
   (->> d
-       str/split-lines
        (map set)
        (partition 3)
        (map (partial reduce set/intersection))

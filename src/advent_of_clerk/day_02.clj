@@ -5,9 +5,12 @@
 
 ;; ## Common:
 
-(def data (str/split-lines (slurp "input/day_02.txt")))
+(defn process [s]
+  (str/split-lines s))
 
-(def ex ["A Y" "B X" "C Z"])
+(def ex (process "A Y\nB X\nC Z"))
+
+(def data (process (slurp "input/day_02.txt")))
 
 (def char->num
   {\A 1 \X 1
