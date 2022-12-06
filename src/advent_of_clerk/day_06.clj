@@ -36,6 +36,9 @@
 
 (part1 data)
 
+;; Or, as a one-liner:
+(->> "input/day_06.txt" slurp (partition 4 1) (map set) (map count) (take-while #(< % 4)) count (+ 4))
+
 ;; ## Part 2:
 
 (defn part2 [d]
