@@ -15,42 +15,41 @@
   (loop [pwd []
          tree {}
          ls? false
-         [line & rest] (str/split-lines s)]
+         [line & rest :as lines] (str/split-lines s)]
+
     (cond
       (or (not line) (empty? line))
+      ;; End of input
       tree
 
       (and ls? (str/starts-with? line "$ "))
-      (recur pwd
-             tree
-             false
-             (cons line rest))
+      ;; End of ls output
+      (recur pwd tree false lines)
 
       (and ls? (str/starts-with? line "dir "))
-      (let [[_ fname] (str/split line #" ")]
-        (recur pwd
-               (assoc-in tree (conj pwd fname) {})
-        ls?
-        rest))
+      ;; Directory in ls output
+      (let [[_ fname] (str/split line #" ")
+            newtree (assoc-in tree (conj pwd fname) {})]
+        (recur pwd newtree ls? rest))
 
       ls?
+      ;; Other ls output (i.e. a file)
       (let [[size fname] (str/split line #" ")
-            size (parse-long size)]
-        (recur pwd
-               (assoc-in tree (conj pwd fname) size)
-               ls?
-               rest))
+            size (parse-long size)
+            newtree (assoc-in tree (conj pwd fname) size)]
+        (recur pwd newtree ls? rest))
 
       (str/starts-with? line "$ cd ")
-      (recur (cd pwd (subs line 5))
-             tree
-             false
-             rest)
+      ;; Update directory
+      (let [newpath (cd pwd (subs line 5))]
+        (recur newpath tree ls? rest))
 
-      (str/starts-with? line "$ ls")
+      (= line "$ ls")
+      ;; Start of ls output
       (recur pwd tree true rest)
 
       :else
+      ;; Shouldn't happen
       (throw (Exception. (format "oops: %s" line))))))
 
 (def ex (process "$ cd /
@@ -79,6 +78,7 @@ $ ls
 
 (def data (process (slurp "input/day_07.txt")))
 
+;; Total size of a (sub)tree:
 (defn treesize [tree]
   (cond
     (map? tree)
@@ -90,27 +90,28 @@ $ ls
     :else
     (throw (Exception. (format "oops: %s" tree)))))
 
+;; All (sub)dirs in a tree:
 (defn dirs
   ([tree]
    (dirs tree []))
-  ([ tree path]
+  ([tree path]
    (let [subtree (get-in tree path)]
      (if (map? subtree)
-       (lazy-seq (cons path
-                       (mapcat (fn [d]
-                                 (dirs tree (conj path d)))
-                               (keys subtree))))
+       ;; It's a dir: add this path plus all subdirs
+       (cons path
+             (mapcat #(dirs tree (conj path %))
+                     (keys subtree)))
+       ;; It's not a dir, don't add anything
        []))))
 
 ;; ## Part 1:
 
 (defn part1 [d]
   (->> d
-       dirs
-       (map #(vector (if (empty? %) "/" (last %))
-                     (treesize (get-in d %))))
-       (filter #(<= (last %) 100000))
-       (map last)
+       (dirs)
+       (map (partial get-in d))
+       (map treesize)
+       (filter #(<= % 100000))
        (apply +)))
 
 (part1 ex)
@@ -119,15 +120,15 @@ $ ls
 
 ;; ## Part 2:
 
-(defn part2 [d] 
+(defn part2 [d]
   (let [free (- 70000000 (treesize d))
         required (- 30000000 free)]
     (->> d
-         dirs
-         (map #(vector (or (last %) "/")
-                       (treesize (get-in d %))))
-         (sort-by last)
-         (drop-while #(< (last %) required))
+         (dirs)
+         (map (partial get-in d))
+         (map treesize)
+         (sort)
+         (drop-while #(< % required))
          (first))))
 
 (part2 ex)
