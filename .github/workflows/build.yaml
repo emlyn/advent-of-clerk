@@ -21,5 +21,6 @@ jobs:
     - name: Local Build
       run: clojure -X:nextjournal/clerk
     - name: Garden build
+      if: github.ref == 'refs/heads/main'
       run: curl https://github.clerk.garden/emlyn/advent-of-clerk?update=1
 
