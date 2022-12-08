@@ -1,6 +1,6 @@
 # 🎄 Advent of Code, using Clerk
 
-![Build](https://github.com/emlyn/advent-of-clerk/actions/workflows/build.yml/badge.svg?branch=main)
+![Build](https://github.com/emlyn/advent-of-clerk/actions/workflows/build.yaml/badge.svg?branch=main)
 
 My attempt at [Advent of Code](https://adventofcode.com)
 with [Clerk](https://clerk.vision).
