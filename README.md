@@ -1,5 +1,7 @@
 # 🎄 Advent of Code, using Clerk
 
+![Build](https://github.com/github/docs/actions/workflows/build.yml/badge.svg?branch=main)
+
 My attempt at [Advent of Code](https://adventofcode.com)
 with [Clerk](https://clerk.vision).
 
