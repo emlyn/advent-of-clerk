@@ -8,7 +8,8 @@
 (defn process [s]
   (->> s
        str/split-lines
-       (mapv #(vector (first %) (parse-long (str (last %)))))))
+       (map #(str/split % #" "))
+       (map #(vector (ffirst %) (parse-long (last %))))))
 
 (def ex (process "R 4
 U 4
