@@ -28,39 +28,42 @@ R 2"))
    \L [0 -1]
    \R [0 1]})
 
-;; ## Part 1:
-
-(defn move [[head [tr tc]] dir]
-  (let [[nhr nhc :as nh] (mapv + head (dirs dir))
-        dr (- nhr tr)
-        dc (- nhc tc)]
+(defn update-tail [[hr hc] [tr tc]]
+  (let [dr (- hr tr)
+        dc (- hc tc)]
     (cond
       (< dr -1)
-      (cond (< dc 0) [nh [(dec tr) (dec tc)]]
-            (= dc 0) [nh [(dec tr) tc]]
-            (> dc 0) [nh [(dec tr) (inc tc)]])
+      (cond (< dc 0) [(dec tr) (dec tc)]
+            (= dc 0) [(dec tr) tc]
+            (> dc 0) [(dec tr) (inc tc)])
       (> dr 1)
-      (cond (< dc 0) [nh [(inc tr) (dec tc)]]
-            (= dc 0) [nh [(inc tr) tc]]
-            (> dc 0) [nh [(inc tr) (inc tc)]])
+      (cond (< dc 0) [(inc tr) (dec tc)]
+            (= dc 0) [(inc tr) tc]
+            (> dc 0) [(inc tr) (inc tc)])
       (< dc -1)
-      (cond (< dr 0) [nh [(dec tr) (dec tc)]]
-            (= dr 0) [nh [tr       (dec tc)]]
-            (> dr 0) [nh [(inc tr) (dec tc)]])
+      (cond (< dr 0) [(dec tr) (dec tc)]
+            (= dr 0) [tr       (dec tc)]
+            (> dr 0) [(inc tr) (dec tc)])
       (> dc 1)
-      (cond (< dr 0) [nh [(dec tr) (inc tc)]]
-            (= dr 0) [nh [tr       (inc tc)]]
-            (> dr 0) [nh [(inc tr) (inc tc)]])
+      (cond (< dr 0) [(dec tr) (inc tc)]
+            (= dr 0) [tr       (inc tc)]
+            (> dr 0) [(inc tr) (inc tc)])
       :else
-      [nh [tr tc]])))
+      [tr tc])))
+
+;; ## Part 1:
+
+(defn move [[head tail] dir]
+  (let [new-head (mapv + head (dirs dir))]
+    [new-head (update-tail new-head tail)]))
 
 (def start [[0 0] [0 0]])
 
-(move start \D)
+(move start \R)
 
 (reductions move
             start
-            [\D \D \R \R])
+            [\U \U \R \R])
 
 (defn part1 [d]
   (->> d
@@ -84,8 +87,25 @@ R 2"))
 
 ;; ## Part 2:
 
+(defn move2 [[head & rest] dir]
+  (let [new-head (mapv + head (dirs dir))]
+    (reductions update-tail new-head rest)))
+
+(def start2 (vec (repeat 10 [0 0])))
+
+(move2 start2 \R)
+
+(reductions move2
+            start2
+            [\U \U \R \R])
+
 (defn part2 [d]
-  (->> d))
+  (->> d
+       (mapcat #(repeat (last %) (first %)))
+       (reductions move2 start2)
+       (map last)
+       (set)
+       (count)))
 
 (part2 ex)
 
