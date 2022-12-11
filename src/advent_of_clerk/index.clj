@@ -20,7 +20,7 @@
                   (when (and (.exists f)
                              (not (re-find #"(^|\n);+ *DO_NOT_PUBLISH" (slurp f))))
                     (str f)))))
-        (range 25)))
+        (range 26)))
 
 
 #_(build-paths)
