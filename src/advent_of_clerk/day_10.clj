@@ -1,7 +1,8 @@
 ;; # 🎄 Advent of Code: Day 10
 (ns advent-of-clerk.day-10
   (:require [nextjournal.clerk :as clerk]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [advent-of-clerk.utils :refer [grid-viewer]]))
 
 ;; ## Common:
 
@@ -196,6 +197,8 @@ noop"))
        (map (partial apply str))
        (str/join \newline)))
 
+^{::clerk/viewer grid-viewer}
 (part2 ex)
 
+^{::clerk/viewer grid-viewer}
 (part2 data)
