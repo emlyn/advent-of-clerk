@@ -57,18 +57,18 @@ R 2"))
   (let [new-head (mapv + head (dirs dir))]
     [new-head (update-tail new-head tail)]))
 
-(def start [[0 0] [0 0]])
+(def start1 [[0 0] [0 0]])
 
-(move start \R)
+(move start1 \R)
 
 (reductions move
-            start
+            start1
             [\U \U \R \R])
 
 (defn part1 [d]
   (->> d
        (mapcat #(repeat (last %) (first %)))
-       (reductions move start)
+       (reductions move start1)
        (map last)
        (set)
        (count)))
@@ -77,13 +77,16 @@ R 2"))
 
 (part1 data)
 
-;; 3225: That's not the right answer; your answer is too low.
+;; ### Initial try:
+;; `3225: That's not the right answer; your answer is too low.`
 
 ;; Debug:
 
 (->> ex
      (mapcat #(repeat (last %) (first %)))
-     (reductions move start))
+     (reductions move start1))
+
+;; (it was a stupid error in the initial parsing in `process` - only looked at last digit)
 
 ;; ## Part 2:
 
@@ -99,15 +102,20 @@ R 2"))
             start2
             [\U \U \R \R])
 
-(defn part2 [d]
+(defn part2 [start d]
   (->> d
        (mapcat #(repeat (last %) (first %)))
-       (reductions move2 start2)
+       (reductions move2 start)
        (map last)
        (set)
        (count)))
 
-(part2 ex)
+(part2 start2 ex)
 
-(part2 data)
+(part2 start2 data)
 
+;; This also works for part 1:
+
+(part2 start1 ex)
+
+(part2 start1 data)
