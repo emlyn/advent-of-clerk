@@ -16,7 +16,7 @@
   []
   (into []
         (keep (fn [day]
-                (let [f (fs/file "src" "advent_of_clerk" (format "day_%s.clj" (cond->> day (<= day 10) (str "0"))))]
+                (let [f (fs/file "src" "advent_of_clerk" (format "day_%s.clj" (cond->> day (< day 10) (str "0"))))]
                   (when (and (.exists f)
                              (not (re-find #"(^|\n);+ *DO_NOT_PUBLISH" (slurp f))))
                     (str f)))))
