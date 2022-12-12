@@ -23,9 +23,9 @@ abdefghi"))
           [(char (+ (int \a) i))
            (inc i)])))
 
-;; ## Part 1:
-
-(defn neighbours [[r c] grid]
+(defn neighbours
+  "Neighbouring cells of cell (r, c)"
+  [[r c] grid]
   (cond-> []
     (pos? r) (conj [(dec r) c])
     (pos? c) (conj [r (dec c)])
@@ -34,67 +34,53 @@ abdefghi"))
 
 (neighbours [0 1] ex)
 
-(defn valid-move? [heights from to]
+(defn valid-move?
+  "Is it possible to move from cell `from` to cell `to` given the height map"
+  [heights from to]
   (>= (->> from (get-in heights) to-height)
       (->> to (get-in heights) to-height dec)))
 
 (valid-move? ex [2 0] [2 1])
 (valid-move? ex [2 0] [3 0])
 
-(defn update-grid [[heights grid] pos]
-  (if-let [nearest
-           (->> grid
-                (neighbours pos)
-                (filter #(valid-move? heights % pos))
-                (map (partial get-in grid))
-                (remove nil?)
-                (seq))]
-    [heights (assoc-in grid pos (inc (apply min nearest)))]
-    [heights grid]))
+(defn valid-neighbours
+  [heights pos]
+  (->> heights
+       (neighbours pos)
+       (filter (partial valid-move? heights pos))))
 
-(defn start-grid [heights start]
-  (assoc-in (vec (repeat (count heights)
-                         (vec (repeat (count (first heights)) nil))))
-            start
-            0))
-
-#_(start-grid ex [0 0])
-
-
-(update-grid [ex (start-grid ex [0 0])] [0 1])
-(update-grid [ex (start-grid ex [0 0])] [0 2])
-
-(defn step [heights grid]
-  (let [result
-        (reduce update-grid
-                [heights grid]
-                (for [r (range (count grid))
-                      c (range (count (first grid)))
-                      :when (nil? (get-in grid [r c]))]
-                  [r c]))]
-    (when (not= (last result) grid)
-      result)))
-
-(step ex (start-grid ex [0 0]))
-
-(defn positions [chr grid]
+(defn positions
+  "Positions where `chr` appears in the grid"
+  [chr grid]
   (->> grid
        (mapv #(str/index-of % chr))
        (map vector
             (range))
        (filter second)))
 
-(defn position [chr grid]
+(defn position
+  "Position of first `chr` in the grid"
+  [chr grid]
   (first (positions chr grid)))
 
 (position \E ex)
 
-(defn distance [heights start end]
-  (loop [grid (start-grid heights start)]
-    (if-let [n (get-in grid end)]
-      n
-      (when-let [next (last (step heights grid))]
-        (recur next)))))
+(defn distance
+  ([heights start end]
+   (distance heights end [start] #{} 0))
+  ([heights end positions seen n]
+   (if (some (partial = end) positions)
+     n
+     (when-let [next (->> positions
+                          (mapcat (partial valid-neighbours heights))
+                          (set)
+                          (remove seen)
+                          (seq))]
+       (recur heights end next (into seen positions) (inc n))))))
+
+(distance ex [0 0] [0 1])
+
+;; ## Part 1:
 
 (defn part1 [heights]
   (distance heights
@@ -110,9 +96,8 @@ abdefghi"))
 (positions \a ex)
 
 (defn part2 [heights]
-  (let [starts
-        (into [(position \S heights)]
-              (positions \a heights))
+  (let [starts (into [(position \S heights)]
+                     (positions \a heights))
         end (position \E heights)]
     (->> starts
          (map #(distance heights % end))
