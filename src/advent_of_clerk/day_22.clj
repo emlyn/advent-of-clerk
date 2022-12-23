@@ -46,24 +46,27 @@
    2 [0 -1]
    3 [-1 0]})
 
-(defn gridmod
+(defn ingrid
   [grid [r c]]
-  (let [r (mod r (count grid))
-        c (mod c (count (get grid r)))]
-    [r c]))
-
+  (cond
+    (neg? r) false
+    (>= r (count grid)) false
+    (neg? c) false
+    (>= c (count (get grid r))) false
+    (= \space (get-in grid [r c])) false
+    :else true))
 
 (defn move
   [grid pos dir n]
-  (println "move" pos dir n)
   (if (zero? n)
     pos
-    (let [nextpos (->> pos
-                       (iterate (comp (partial gridmod grid)
-                                      (partial mapv + (directions dir))))
-                       (next)
-                       (drop-while #(= \space (get-in grid %)))
-                       (first))]
+    (let [nextpos (mapv + pos (directions dir))
+          nextpos (if (ingrid grid nextpos)
+                    nextpos
+                    (->> pos
+                         (iterate #(mapv - % (directions dir)))
+                         (take-while (partial ingrid grid))
+                         (last)))]
       (if (= \. (get-in grid nextpos))
           (recur grid nextpos dir (dec n))
           pos))))
@@ -87,10 +90,7 @@
 
     (int? cmd)
     [(move grid pos dir cmd)
-     dir]
-
-    :else
-    (throw (Exception. (format "oops %s: %s" cmd (type cmd))))))
+     dir]))
 
 ;; ## Part 1:
 
@@ -108,8 +108,6 @@
 (part1 ex)
 
 (part1 data)
-
-;; 160008: That's not the right answer; your answer is too high
 
 ;; ## Part 2:
 
