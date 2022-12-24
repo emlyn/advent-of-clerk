@@ -71,8 +71,7 @@
                     (for [x (range x1 (inc x2))
                           y (range y1 (inc y2))
                           z (range z1 (inc z2))
-                          :let [p [x y z]]
-                          :when (not (d p))]
+                          :when (not (d [x y z]))]
                       [[x y z] (boolean (or (#{x1 x2} x)
                                             (#{y1 y2} y)
                                             (#{z1 z2} z)))]))]
@@ -82,7 +81,11 @@
                             {}
                             outer)]
         (if (= next outer)
-          (->> next vals (remove identity) (count) (- (part1 d)))
+          (->> next
+               (remove second)
+               (keys)
+               (part1)
+               (- (part1 d)))
           (recur next))))))
 
 (part2 ex)
