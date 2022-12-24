@@ -111,9 +111,74 @@
 
 ;; ## Part 2:
 
-(defn part2 [d]
-  (->> d))
+(defn err
+  [msg & args]
+  (throw (Exception. (apply format msg args))))
 
-(part2 ex)
+(defn fixup
+  [[r c] dir]
+  (case dir
+    0 (cond
+        (and (<= 0 r 49)    (= c 150))      [[(- 149 r)        99] 2] ;; 4a
+        (and (<= 100 r 149) (= c 100))      [[(- 149 r)       149] 2] ;; 4b
+        (and (<= 50 r 99)   (= c 100))      [[49         (+ r 50)] 3] ;; 6b
+        (and (<= 150 r 199) (= c 50))       [[149       (- r 100)] 3] ;; 7b
+        :else (err "Oops: [%s %s] %s" r c dir))
+    1 (cond
+        (and (= r 50)       (<= 100 c 149)) [[(- c 50)         99] 2] ;; 6a
+        (and (= r 150)      (<= 50 c 99))   [[(+ c 100)        49] 2] ;; 7a
+        (and (= r 200)      (<= 0 c 49))    [[0         (+ c 100)] 1] ;; 2b
+        :else (err "Oops: [%s %s] %s" r c dir))
+    2 (cond
+        (and (<= 0 r 49)    (= c 49))       [[(- 149 r)         0] 0] ;; 3a
+        (and (<= 50 r 99)   (= c 49))       [[100       (- r  50)] 1] ;; 5a
+        (and (<= 150 r 199) (= c -1))       [[0         (- r 100)] 1] ;; 1b
+        (and (<= 100 r 149) (= c -1))       [[(- 149 r)        50] 0] ;; 3b
+        :else (err "Oops: [%s %s] %s" r c dir))
+    3 (cond
+        (and (= r -1)     (<= 50 c 99))     [[(+ c 100)         0] 0] ;; 1a
+        (and (= r -1)     (<= 100 c 149))   [[199       (- c 100)] 3] ;; 2a
+        (and (= r 99)     (<= 0 c 49))      [[(+ c 50)         50] 0] ;; 5b
+        :else (err "Oops: [%s %s] %s" r c dir))
+    (err "Oops: [%s %s] %s" r c dir)))
 
-#_(part2 data)
+(defn move2
+  [grid pos dir n]
+  (if (zero? n)
+    [pos dir]
+    (let [nextpos (mapv + pos (directions dir))
+          [nextpos nextdir] (if (ingrid grid nextpos)
+                              [nextpos dir]
+                              (fixup nextpos dir))]
+      (if (= \. (get-in grid nextpos))
+        (recur grid nextpos nextdir (dec n))
+        [pos dir]))))
+
+(defn step2
+  [grid pos dir cmd]
+  (cond
+    (= \L cmd)
+    [pos (mod (dec dir) 4)]
+
+    (= \R cmd)
+    [pos (mod (inc dir) 4)]
+
+    (int? cmd)
+    (move2 grid pos dir cmd)))
+
+(defn part2 [[grid cmds]]
+  (let [[[r c] d]
+        (reduce (fn [[pos dir] cmd]
+                  (step2 grid pos dir cmd))
+                [(start-pos grid) 0]
+                cmds)]
+    [r c d
+     (+ (* 1000 (inc r))
+        (* 4 (inc c))
+        d)]))
+
+#_(part2 ex)
+
+(part2 data)
+
+;; 131052: That's not the right answer; your answer is too high
