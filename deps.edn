@@ -1,10 +1,10 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        io.github.nextjournal/clerk {:git/sha "a5ddd78fb5dc970b15fbbfee065ea1ac45e03974"}
+        io.github.nextjournal/clerk {:git/sha "7f9e968e781ceee51f55ac0df4465040ada69413"}
         org.babashka/cli {:mvn/version "0.5.40"}
         ;; silence log warnings
         org.slf4j/slf4j-nop {:mvn/version "1.7.36"}}
- 
+
  :aliases {:nextjournal/clerk {:exec-fn nextjournal.clerk/build!
                                :exec-args {:index "src/advent_of_clerk/index.clj"
                                            :paths-fn advent-of-clerk.index/build-paths}
